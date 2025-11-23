@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\xipslib\xipslib.c" />
+    <ClCompile Include="..\xipslib\xipslib.cpp" />
     <ClCompile Include="example.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../xipslib</AdditionalIncludeDirectories>
     </ClCompile>
@@ -82,7 +82,6 @@
       <PreprocessorDefinitions>XBOX;_XBOX;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>../xipslib</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -90,6 +89,8 @@
       <SupportJustMyCode>false</SupportJustMyCode>
       <ControlFlowGuard>false</ControlFlowGuard>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

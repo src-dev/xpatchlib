@@ -1,4 +1,4 @@
-//Example usage of xipslib.c
+//Example usage of xipslib.cpp
 
 //Set paths to files
 #define IPS_FILE "F:\\example\\patch.ips"
@@ -44,7 +44,7 @@ VOID __cdecl main() {
 
 	logEntry("Patching source file..");
 	switch(applyIPS(IPS_FILE, SRC_FILE)) {
-		case 0: 
+		case E_NO_ERROR: 
 			logEntry("Source file patched successfully.");
 			break;
 		case E_FOPEN_IPS:
@@ -101,8 +101,7 @@ void logEntry(char ENTRY[]) {
 
 //Return to dashboard
 extern "C" VOID __stdcall HalReturnToFirmware(ULONG Routine); // kernel export
-static __forceinline void ReturnToDash()
-{
+static __forceinline void ReturnToDash() {
 	// 2 == HalQuickReboot (returns to dash on retail kernels)
 	//HalReturnToFirmware(2);
 	XLaunchNewImage(NULL, NULL);

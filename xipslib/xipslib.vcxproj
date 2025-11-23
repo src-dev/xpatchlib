@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="xipslib.c" />
+    <ClCompile Include="xipslib.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="xipslib.h" />

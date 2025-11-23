@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "xipslib.h"
 
 static unsigned char _PATCH[] = { 0x50,0x41,0x54,0x43,0x48 };
@@ -20,7 +21,7 @@ int createBak(const char* src, const char* dst) {
 
     fclose(fsrc);
     fclose(fdst);
-    return 0;
+    return E_NO_ERROR;
 }
 
 int applyIPS(const char* ips, const char* src) {
@@ -50,7 +51,7 @@ int applyIPS(const char* ips, const char* src) {
         char size[2] = { 0 };
         fread(size, 1, 2, fips);
         int s = ((unsigned char)size[0] << 8) | (unsigned char)size[1];
-        unsigned char* data = malloc(s * sizeof(char));
+        unsigned char* data = (unsigned char*)malloc(s * sizeof(char));
         if (data == NULL) {
             fclose(fips);
             fclose(fsrc);

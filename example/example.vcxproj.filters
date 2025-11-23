@@ -21,7 +21,7 @@
     <ClCompile Include="example.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\xipslib\xipslib.c">
+    <ClCompile Include="..\xipslib\xipslib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
