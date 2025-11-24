@@ -3,7 +3,7 @@
 //Set paths to files
 #define IPS_FILE "F:\\example\\patch.ips"
 #define SRC_FILE "F:\\example\\default.xbe"
-#define BAK_FILE "F:\\example\\default.xbe.bak"
+#define BAK_EXT  "bak"
 #define LOG_FILE "F:\\example\\debug.log"
 
 #include <stdio.h>
@@ -26,7 +26,7 @@ VOID __cdecl main() {
 	openLog();
 
 	logEntry("Creating backup file..");
-	switch (createBak(SRC_FILE, BAK_FILE)) {
+	switch (createBak(SRC_FILE, BAK_EXT, true)) {
 		case 0:
 			logEntry("Backup file created successfully.");
 			break;

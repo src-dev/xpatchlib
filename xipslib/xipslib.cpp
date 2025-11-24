@@ -6,10 +6,68 @@
 static unsigned char _PATCH[] = { 0x50,0x41,0x54,0x43,0x48 };
 static unsigned char _EOF[] = { 0x45,0x4F,0x46 };
 
-int createBak(const char* src, const char* dst) {
+int createBak(const char* src, const char* ext, bool ovr) {
     FILE* fsrc = fopen(src, "rb");
     if (!fsrc) return E_FOPEN_SRC;
 
+    char* dst = (char*)malloc(sizeof(char) * (strlen(src) + strlen(ext) + 2));
+    if (dst == NULL) {
+        fclose(fsrc);
+        return E_OUT_OF_MEMORY;
+    }
+
+    strcpy(dst, src);
+    strcat(dst, ".");
+    strcat(dst, ext);
+
+    if (!ovr) {
+        FILE* fdst = fopen(dst, "rb");
+        bool exists = false;
+        if (fdst) {
+            exists = true;
+            fclose(fdst);
+        }
+        fclose(fsrc);
+        return E_CANNOT_OVR;
+    }
+
+    FILE* fdst = fopen(dst, "wb");
+    if (!fdst) {
+        fclose(fsrc);
+        return E_FOPEN_DST;
+    }
+
+    int c;
+    while ((c = fgetc(fsrc)) != EOF) fputc(c, fdst);
+
+    fclose(fsrc);
+    fclose(fdst);
+    return E_NO_ERROR;
+}
+
+int restoreBak(const char* src, const char* ext, bool ovr) {
+    FILE* fsrc = fopen(src, "rb");
+    if (!fsrc) return E_FOPEN_SRC;
+
+    char* dst = (char*)malloc(sizeof(char) * (strlen(src) - strlen(ext)));
+    if (dst == NULL) {
+        fclose(fsrc);
+        return E_OUT_OF_MEMORY;
+    }
+
+    memcpy(dst, src, strlen(src) - (strlen(ext) + 1));
+
+    if (!ovr) {
+        FILE* fdst = fopen(dst, "rb");
+        bool exists = false;
+        if (fdst) {
+            exists = true;
+            fclose(fdst);
+        }
+        fclose(fsrc);
+        return E_CANNOT_OVR;
+    }
+    
     FILE* fdst = fopen(dst, "wb");
     if (!fdst) {
         fclose(fsrc);

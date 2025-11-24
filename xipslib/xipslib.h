@@ -7,14 +7,16 @@ typedef enum {
 	E_FOPEN_DST,
 	E_FOPEN_IPS,
 	E_NOT_IPS,
-	E_OUT_OF_MEMORY
+	E_OUT_OF_MEMORY,
+	E_CANNOT_OVR
 } ErrorCode;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	int createBak(const char* src, const char* dst);
+	int createBak(const char* src, const char* ext, bool ovr);
+	int restoreBak(const char* src, const char* ext, bool ovr);
 	int applyIPS(const char* ips, const char* src);
 
 #ifdef __cplusplus
