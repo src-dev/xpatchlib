@@ -32,7 +32,7 @@ int createBak(const char* src, bool ovr) {
         return E_FOPEN_DST;
     }
 
-    char buf[1024];
+    char buf[4096];
     int c;
     while ((c = fread(buf, 1, sizeof(buf), fsrc))) fwrite(buf, 1, c, fdst);
 
