@@ -48,32 +48,22 @@ int restoreBak(const char* src, bool ovr) {
     strcpy(dst, src);
     dst[strlen(src) - 4] = '\0';
 
-    if (!ovr) {
-        FILE* fdst = fopen(dst, "rb");
-        bool exists = false;
-        if (fdst) {
-            exists = true;
-            fclose(fdst);
-        }
-        if (exists) return E_CANNOT_OVR;
+    FILE* fdst = fopen(dst, "rb");
+    bool exists = false;
+    if (fdst) {
+        exists = true;
+        fclose(fdst);
     }
-    
+
+    if (!ovr && exists) return E_CANNOT_OVR;
+
     FILE* fsrc = fopen(src, "rb");
     if (!fsrc) return E_FOPEN_SRC;
-
-    FILE* fdst = fopen(dst, "wb");
-    if (!fdst) {
-        fclose(fsrc);
-        return E_FOPEN_DST;
-    }
-
-    char buf[1024];
-    int c;
-    while ((c = fread(buf, 1, sizeof(buf), fsrc))) fwrite(buf, 1, c, fdst);
-
     fclose(fsrc);
-    fclose(fdst);
-    remove(src);
+
+    if (exists) remove(dst);
+    
+    if (rename(src, dst) != 0) return E_REN_ERROR;
     return E_NO_ERROR;
 }
 
