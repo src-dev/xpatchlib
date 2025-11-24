@@ -6,19 +6,12 @@
 static unsigned char _PATCH[] = { 0x50,0x41,0x54,0x43,0x48 };
 static unsigned char _EOF[] = { 0x45,0x4F,0x46 };
 
-int createBak(const char* src, const char* ext, bool ovr) {
-    FILE* fsrc = fopen(src, "rb");
-    if (!fsrc) return E_FOPEN_SRC;
-
-    char* dst = (char*)malloc(sizeof(char) * (strlen(src) + strlen(ext) + 2));
-    if (dst == NULL) {
-        fclose(fsrc);
-        return E_OUT_OF_MEMORY;
-    }
+int createBak(const char* src, bool ovr) {
+    char* dst = (char*)malloc(sizeof(char) * (strlen(src) + 5));
+    if (dst == NULL) return E_OUT_OF_MEMORY;
 
     strcpy(dst, src);
-    strcat(dst, ".");
-    strcat(dst, ext);
+    strcat(dst, ".bak");
 
     if (!ovr) {
         FILE* fdst = fopen(dst, "rb");
@@ -27,9 +20,11 @@ int createBak(const char* src, const char* ext, bool ovr) {
             exists = true;
             fclose(fdst);
         }
-        fclose(fsrc);
-        return E_CANNOT_OVR;
+        if (exists) return E_CANNOT_OVR;
     }
+
+    FILE* fsrc = fopen(src, "rb");
+    if (!fsrc) return E_FOPEN_SRC;
 
     FILE* fdst = fopen(dst, "wb");
     if (!fdst) {
@@ -45,17 +40,12 @@ int createBak(const char* src, const char* ext, bool ovr) {
     return E_NO_ERROR;
 }
 
-int restoreBak(const char* src, const char* ext, bool ovr, bool del) {
-    FILE* fsrc = fopen(src, "rb");
-    if (!fsrc) return E_FOPEN_SRC;
+int restoreBak(const char* src, bool ovr) {
+    char* dst = (char*)malloc(sizeof(char) * (strlen(src) + 1));
+    if (dst == NULL) return E_OUT_OF_MEMORY;
 
-    char* dst = (char*)malloc(sizeof(char) * (strlen(src) - strlen(ext)));
-    if (dst == NULL) {
-        fclose(fsrc);
-        return E_OUT_OF_MEMORY;
-    }
-
-    memcpy(dst, src, strlen(src) - (strlen(ext) + 1));
+    strcpy(dst, src);
+    dst[strlen(src) - 4] = '\0';
 
     if (!ovr) {
         FILE* fdst = fopen(dst, "rb");
@@ -64,10 +54,12 @@ int restoreBak(const char* src, const char* ext, bool ovr, bool del) {
             exists = true;
             fclose(fdst);
         }
-        fclose(fsrc);
-        return E_CANNOT_OVR;
+        if (exists) return E_CANNOT_OVR;
     }
     
+    FILE* fsrc = fopen(src, "rb");
+    if (!fsrc) return E_FOPEN_SRC;
+
     FILE* fdst = fopen(dst, "wb");
     if (!fdst) {
         fclose(fsrc);
@@ -79,7 +71,7 @@ int restoreBak(const char* src, const char* ext, bool ovr, bool del) {
 
     fclose(fsrc);
     fclose(fdst);
-    if (del) remove(src);
+    remove(src);
     return E_NO_ERROR;
 }
 

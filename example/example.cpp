@@ -3,7 +3,6 @@
 //Set paths to files
 #define IPS_FILE "F:\\example\\patch.ips"
 #define SRC_FILE "F:\\example\\default.xbe"
-#define BAK_EXT  "bak"
 #define LOG_FILE "F:\\example\\debug.log"
 
 #include <stdio.h>
@@ -21,47 +20,74 @@ FILE* lf = NULL;
 
 //Program entry point
 VOID __cdecl main() {
-	
+
 	mountAllDrives();
 	openLog();
 
+	char* bak = (char*)malloc(sizeof(char) * (strlen(SRC_FILE) + 5));
+
+	if (bak != NULL) {
+		strcpy(bak, SRC_FILE);
+		strcat(bak, ".bak");
+		FILE* fbak = fopen(bak, "rb");
+		if (fbak != NULL) {
+			fclose(fbak);
+			logEntry("Attempting to restore backup file..");
+			switch (restoreBak(bak, true)) {
+			case 0:
+				logEntry("Backup file restored successfully.");
+				break;
+			case E_FOPEN_SRC:
+				logEntry("Error opening backup file!");
+				closeLog();
+				ReturnToDash();
+				return;
+			case E_FOPEN_DST:
+				logEntry("Error restoring backup file!");
+				closeLog();
+				ReturnToDash();
+				return;
+			}
+		}
+	}
+
 	logEntry("Creating backup file..");
-	switch (createBak(SRC_FILE, BAK_EXT, true)) {
-		case 0:
-			logEntry("Backup file created successfully.");
-			break;
-		case E_FOPEN_SRC: 
-			logEntry("Error opening source file!");
-			closeLog();
-			ReturnToDash();
-			return; 
-		case E_FOPEN_DST:
-			logEntry("Error creating backup file!");
-			closeLog();
-			ReturnToDash();
-			return;
+	switch (createBak(SRC_FILE, true)) {
+	case 0:
+		logEntry("Backup file created successfully.");
+		break;
+	case E_FOPEN_SRC: 
+		logEntry("Error opening source file!");
+		closeLog();
+		ReturnToDash();
+		return; 
+	case E_FOPEN_DST:
+		logEntry("Error creating backup file!");
+		closeLog();
+		ReturnToDash();
+		return;
 	}
 
 	logEntry("Patching source file..");
 	switch(applyIPS(IPS_FILE, SRC_FILE)) {
-		case E_NO_ERROR: 
-			logEntry("Source file patched successfully.");
-			break;
-		case E_FOPEN_IPS:
-			logEntry("Error opening IPS file!");
-			closeLog();
-			ReturnToDash();
-			return;
-		case E_FOPEN_SRC:
-			logEntry("Error opening source file!");
-			closeLog();
-			ReturnToDash();
-			return;
-		case E_NOT_IPS:
-			logEntry("The IPS file is not a valid IPS file!");
-			closeLog();
-			ReturnToDash();
-			return;
+	case E_NO_ERROR: 
+		logEntry("Source file patched successfully.");
+		break;
+	case E_FOPEN_IPS:
+		logEntry("Error opening IPS file!");
+		closeLog();
+		ReturnToDash();
+		return;
+	case E_FOPEN_SRC:
+		logEntry("Error opening source file!");
+		closeLog();
+		ReturnToDash();
+		return;
+	case E_NOT_IPS:
+		logEntry("The IPS file is not a valid IPS file!");
+		closeLog();
+		ReturnToDash();
+		return;
 	}
 
 	closeLog();
