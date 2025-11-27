@@ -33,8 +33,8 @@ VOID __cdecl main() {
 		if (fbak != NULL) {
 			fclose(fbak);
 			logEntry("Attempting to restore backup file..");
-			switch (restoreBak(bak, true)) {
-			case 0:
+			switch (RestoreBak(bak, true)) {
+			case E_NO_ERROR:
 				logEntry("Backup file restored successfully.");
 				break;
 			case E_FOPEN_SRC:
@@ -47,13 +47,24 @@ VOID __cdecl main() {
 				closeLog();
 				ReturnToDash();
 				return;
+			case E_CANNOT_OVR:
+				logEntry("Original already exists and you have specified no override.");
+				closeLog();
+				ReturnToDash();
+				return;
+			case E_REN_ERROR:
+				logEntry("Renaming failed. The file may be protected!");
+				closeLog();
+				ReturnToDash();
+				return;
+
 			}
 		}
 	}
 
 	logEntry("Creating backup file..");
-	switch (createBak(SRC_FILE, true)) {
-	case 0:
+	switch (CreateBak(SRC_FILE, true)) {
+	case E_NO_ERROR:
 		logEntry("Backup file created successfully.");
 		break;
 	case E_FOPEN_SRC: 
@@ -66,10 +77,21 @@ VOID __cdecl main() {
 		closeLog();
 		ReturnToDash();
 		return;
+	case E_CANNOT_OVR:
+		logEntry("Backup already exists and you have specified no override.");
+		closeLog();
+		ReturnToDash();
+		return;
+	case E_FWRITE_DST:
+		logEntry("A write error occured while creating the backup!");
+		closeLog();
+		ReturnToDash();
+		return;
+
 	}
 
 	logEntry("Patching source file..");
-	switch(applyIPS(IPS_FILE, SRC_FILE)) {
+	switch(ApplyIPS(IPS_FILE, SRC_FILE)) {
 	case E_NO_ERROR: 
 		logEntry("Source file patched successfully.");
 		break;
@@ -88,9 +110,23 @@ VOID __cdecl main() {
 		closeLog();
 		ReturnToDash();
 		return;
+	case E_BAD_IPS:
+		logEntry("Bad or corrupted IPS file.");
+		closeLog();
+		ReturnToDash();
+		return;
+	case E_FSEEK_SRC:
+		logEntry("The IPS specifies an offset out of range.");
+		closeLog();
+		ReturnToDash();
+		return;
+
 	}
 
 	closeLog();
+
+	free(bak);
+
 	ReturnToDash();
 	return;
 }
