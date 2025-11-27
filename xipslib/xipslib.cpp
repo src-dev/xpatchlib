@@ -72,7 +72,7 @@ int CreateBak(const char* src, bool ovr) {
     if (buf == NULL) return E_OUT_OF_MEMORY;
 
     int c;
-    while ((c = fread(buf, 1, sizeof(buf), fsrc))) {
+    while ((c = fread(buf, 1, 65536, fsrc))) {
         if (fwrite(buf, 1, c, fdst) != c) {
             free(buf);
             return E_FWRITE_DST;
