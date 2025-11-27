@@ -14,7 +14,10 @@ int CheckIPS(FILE* fips) {
         char offset[3];
         if (fread(offset, 1, 3, fips) != 3) return E_BAD_IPS;
 
-        if (memcmp(offset, _EOF, 3) == 0) return E_NO_ERROR;
+        if (memcmp(offset, _EOF, 3) == 0) {
+            fseek(fips, 0, SEEK_SET);
+            return E_NO_ERROR;
+        }
 
         char size[2];
         if (fread(size, 1, 2, fips) != 2) return E_BAD_IPS;
