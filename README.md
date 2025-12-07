@@ -1,6 +1,6 @@
-# xipslib
+# xpatchlib
 
-A small C library to apply **IPS (International Patching System)** patches to binary files on Xbox. It also supports creating backup copies of the original file before patching.
+A small C++ library to apply **IPS, UPS, BPS** patches to binary files on Xbox. It also supports creating backup copies of the original file before patching.
 
 ### Features
 
@@ -10,7 +10,7 @@ A small C library to apply **IPS (International Patching System)** patches to bi
 ### Usage
 **Creating a Backup**
 ```c
-switch (createBak(SRC_FILE, bool true)) {
+switch (createBak(SRC_FILE, bool true, Fun_ProgressCallback)) {
   case E_NO_ERROR:
     //Backup created successfully
     break;
@@ -52,11 +52,11 @@ switch (applyIPS(IPS_FILE, SRC_FILE)) {
 - Stops when it encounters the IPS EOF marker (EOF).
 
 ### TODO
-- More testing
-- Add a patch memory function
+- Add ApplyUPS()
+- Add ApplyBPS()
 - ???
 
 ### Credit
 - [Rachmaninoff](https://github.com/src-dev)
 - [CrunchBite](https://github.com/CrunchBite) (Helper functions in example.cpp)
-- [Haguero](https://github.com/HoRnEyDvL) (Return to dashboard function in example.cpp)
+- [Haguero](https://github.com/HoRnEyDvL) (Return to dashboard function in main.cpp)
